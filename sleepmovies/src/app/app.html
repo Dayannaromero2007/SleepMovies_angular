@@ -1,0 +1,62 @@
+<div style="padding: 20px; font-family: Arial, sans-serif;">
+  <h1>🎬 Lista de Películas (Sleep Movies)</h1>
+
+  <!-- Películas -->
+  <div *ngIf="peliculas && peliculas.length > 0; else sinPeliculas">
+    <ul>
+      <li *ngFor="let pelicula of peliculas" style="margin-bottom: 12px; border-bottom: 1px solid #ddd; padding-bottom: 8px;">
+        <strong>{{ pelicula.titulo }}</strong><br>
+        <span>Género: {{ pelicula.genero }}</span> |
+        <span>Duración: {{ pelicula.duracion }} min</span> |
+        <span>Clasificación: {{ pelicula.clasificacion }}</span>
+      </li>
+    </ul>
+  </div>
+
+  <ng-template #sinPeliculas>
+    <p>Cargando películas o esperando conexión con el servidor...</p>
+  </ng-template>
+
+  <!-- Funciones -->
+  <h2>🎬 Funciones Disponibles</h2>
+
+  <div *ngIf="funciones && funciones.length > 0; else sinFunciones">
+    <ul>
+      <li *ngFor="let funcion of funciones" style="margin-bottom: 12px; border-bottom: 1px solid #ddd; padding-bottom: 8px;">
+        <strong>{{ funcion.sala }}</strong><br>
+        <span>Fecha y Hora: {{ funcion.fechaHora | date:'dd/MM/yyyy, hh:mm a' }}</span> |
+        <span>Precio: {{ funcion.precio | currency:'COP':'symbol-narrow':'1.0-0' }}</span> |
+        <span>Cupos: {{ funcion.cuposDisponibles }}</span>
+      </li>
+    </ul>
+  </div>
+
+  <ng-template #sinFunciones>
+    <p>Cargando funciones disponibles...</p>
+  </ng-template>
+
+  <!-- Compras -->
+  <h2>🛒 Compras Realizadas</h2>
+
+  <div *ngIf="compras && compras.length > 0; else sinCompras">
+    <ul>
+      <li *ngFor="let compra of compras" style="margin-bottom: 12px; border-bottom: 1px solid #ddd; padding-bottom: 8px;">
+        <strong>{{ compra.nombreCliente }}</strong><br>
+        <span>Boletas: {{ compra.cantidadBoletas }}</span>
+        <div *ngFor="let f of compra.funciones">
+          <span>
+            Función: {{ f.sala }} |
+            {{ f.fechaHora | date:'dd/MM/yyyy, hh:mm a' }} |
+            Total: {{ f.precio * compra.cantidadBoletas | currency:'COP':'symbol-narrow':'1.0-0' }}
+          </span>
+        </div>
+      </li>
+    </ul>
+  </div>
+
+  <ng-template #sinCompras>
+    <p>No hay compras registradas todavía.</p>
+  </ng-template>
+</div>
+
+
