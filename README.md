@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Sleepmovies
 
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.29.
@@ -57,3 +58,7 @@ Angular CLI does not come with an end-to-end testing framework by default. You c
 ## Additional Resources
 
 For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+=======
+# SleepMovies
+proyecto final de taquilla de cine sleepmovies
+>>>>>>> 081f7c7f8aad2a9f5029fbfbe797a612603f9036
