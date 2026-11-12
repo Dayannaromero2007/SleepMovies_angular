@@ -1,5 +1,7 @@
 /* To learn more about Typescript configuration file: https://www.typescriptlang.org/docs/handbook/tsconfig-json.html. */
 /* To learn more about Angular compiler options: https://angular.dev/reference/configs/angular-compiler-options. */
+/* Este es un comentario salvando la patria a Valentina*/
+/* Todo fué culpa de Camilo Galán*/
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
