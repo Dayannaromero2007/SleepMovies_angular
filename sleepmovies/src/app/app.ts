@@ -51,6 +51,27 @@ export class App implements OnInit {
     });
   }
 
+  eliminarPelicula(id: number): void {
+    this.peliculaService.eliminarPeliculas(id).subscribe({
+      next:  () => {
+        console.log('Pelicula eliminada:', id);
+        this.cargarPeliculas();
+      },
+      error: (err) => console.error('Error al eliminar pelicula:', err)
+    });
+  }
+
+  editarPelicula(pelicula: any): void {
+    const cambios = { ...pelicula, titulo: pelicula.titulo + ' (editado)'};
+    this.peliculaService.actualizarPeliculas(pelicula.idpeliculas, cambios).subscribe({
+      next: () => {
+        console.log('Pelicula actualizada:', pelicula.idpeliculas);
+        this.cargarPeliculas();
+      },
+      error: (err) => console.error('Error al actualizar peliculas:', err)
+    });
+  }
+
   cargarFunciones(): void {
     this.funcionService.obtenerFunciones().subscribe({
       next: (data) => {
@@ -68,6 +89,27 @@ export class App implements OnInit {
     });
   }
 
+  eliminarFuncion(id: number): void {
+    this.funcionService.eliminarFunciones(id).subscribe({
+      next: () => {
+        console.log('Funcion eliminada:', id);
+        this.cargarFunciones();
+      },
+      error: (err) => console.error('Error al eliminar funcion:', err)
+    });
+  }
+
+  editarFuncion(funcion: any): void {
+    const cambios = { ...funcion, cuposDisponibles: funcion.cuposDisponibles - 1 };
+    this.funcionService.actualizarFunciones(funcion.idfunciones, cambios).subscribe({
+      next: () => {
+        console.log('Funcion actualizada;', funcion.idfunciones);
+        this.cargarFunciones();
+      },
+      error: (err) => console.error('Error al actualizar funcion:', err)
+    });
+  }
+
   cargarCompras(): void {
     this.comprasService.obtenerCompras().subscribe({
       next: (data) => {
@@ -82,6 +124,30 @@ export class App implements OnInit {
         console.error('Error al cargar compras:', err);
         this.cdr.detectChanges();
       }
+    });
+  }
+  eliminarCompra(id: number): void {
+    this.comprasService.eliminarCompra(id).subscribe({
+      next: () => {
+        console.log('Compra eliminada:', id);
+        this.cargarCompras();
+      },
+      error: (err) => console.error('Error al eliminar compra:', err)
+    });
+  }
+
+  editarCompra(compra: any): void {
+    const cambios = {
+      ...compra,
+      nombreCliente: compra.nombreCliente + ' (editado)',
+      cantidadBoletas: compra.cantidadBoletas + 1
+    };
+    this.comprasService.actualizarCompra(compra.idcompras, cambios).subscribe({
+      next: () => {
+        console.log('Compra actualizada:', compra.idcompras);
+        this.cargarCompras();
+      },
+      error: (err) => console.error('Error al actualizar compra:', err)
     });
   }
 }
