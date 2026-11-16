@@ -44,9 +44,9 @@
         @for (funcion of funciones; track funcion.idfunciones) {
           <tr>
             <td>
-              @for (p of funcion.peliculas; track p.idpeliculas) {
-                <span>{{ p.titulo }}</span>
-              } @empty {
+              @if (funcion.pelicula) {
+                <span>{{ funcion.pelicula.titulo }}</span>
+              } @else {
                 <span>Sin película asignada</span>
               }
             </td>
@@ -83,16 +83,12 @@
           <tr>
             <td>{{ compra.nombreCliente }}</td>
             <td>
-              @for (f of compra.funciones; track f.idfunciones) {
-                <span>{{ f.sala }} | {{ f.fechaHora | date:'dd/MM/yyyy, hh:mm a' }}</span>
+              @if (compra.funcion) {
+                <span>{{ compra.funcion.sala }} | {{ compra.funcion.fechaHora | date:'dd/MM/yyyy, hh:mm a' }}</span>
               }
             </td>
             <td>{{ compra.cantidadBoletas }}</td>
-            <td>
-              @for (f of compra.funciones; track f.idfunciones) {
-                <span>{{ f.precio * compra.cantidadBoletas | currency:'COP':'symbol-narrow':'1.0-0' }}</span>
-              }
-            </td>
+            <td>{{ compra.valorTotal | currency:'COP':'symbol-narrow':'1.0-0' }}</td>
           </tr>
         }
       </tbody>
