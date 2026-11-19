@@ -44,6 +44,13 @@ export class App implements OnInit {
   mensajeCompra: string = '';
   errorCompra: string = '';
 
+
+  // --- Historial de compras: filtro por fechas ---
+  fechaDesde: string = '';
+  fechaHasta: string = '';
+  filtroActivo: boolean = false;
+  errorHistorial: string = '';
+
   constructor(
     private peliculaService: PeliculaService,
     private funcionService: FuncionService,
@@ -369,21 +376,73 @@ export class App implements OnInit {
     this.errorCompra = '';
   }
 
+    get totalVentas(): number {
+    return this.compras.reduce((suma, c) => suma + Number(c.valorTotal || 0), 0);
+  }
+
+  get totalBoletas(): number {
+    return this.compras.reduce((suma, c) => suma + Number(c.cantidadBoletas || 0), 0);
+  }
+
   cargarCompras(): void {
-    this.comprasService.obtenerCompras().subscribe({
-      next: (data) => {
+    const peticion = this.filtroActivo
+      ? this.comprasService.obtenerHistorial(this.fechaDesde, this.fechaHasta)
+      : this.comprasService.obtenerCompras();
+
+    peticion.subscribe({
+      next: (data: any) => {
         this.compras = data;
         this.cargandoCompras = false;
         console.log('Compras cargadas con éxito:', data);
         this.cdr.detectChanges();
       },
-      error: (err) => {
-        this.errorConexion = 'No se pudo conectar con el servidor (puerto 8080).';
+      error: (err: any) => {
+        if (this.filtroActivo) {
+          this.errorHistorial = this.mensajeDeError(err, 'No se pudo consultar el historial.');
+        } else {
+          this.errorConexion = 'No se pudo conectar con el servidor (puerto 8080).';
+        }
         this.cargandoCompras = false;
         console.error('Error al cargar compras:', err);
         this.cdr.detectChanges();
       }
     });
+  }
+
+  consultarHistorial(): void {
+    this.errorHistorial = '';
+
+    if (!this.fechaDesde || !this.fechaHasta) {
+      this.errorHistorial = 'Selecciona las fechas "Desde" y "Hasta".';
+      this.cdr.detectChanges();
+      return;
+    }
+    if (this.fechaDesde > this.fechaHasta) {
+      this.errorHistorial = 'La fecha "Desde" no puede ser posterior a la fecha "Hasta".';
+      this.cdr.detectChanges();
+      return;
+    }
+
+    this.filtroActivo = true;
+    this.cargarCompras();
+  }
+
+  consultarHoy(): void {
+    const hoy = new Date();
+    const anio = hoy.getFullYear();
+    const mes = String(hoy.getMonth() + 1).padStart(2, '0');
+    const dia = String(hoy.getDate()).padStart(2, '0');
+    this.fechaDesde = `${anio}-${mes}-${dia}`;
+    this.fechaHasta = this.fechaDesde;
+    this.consultarHistorial();
+  }
+
+  verTodasLasCompras(): void {
+    this.fechaDesde = '';
+    this.fechaHasta = '';
+    this.filtroActivo = false;
+    this.errorHistorial = '';
+    this.cargarCompras();
   }
 
   comprarBoletas(): void {
