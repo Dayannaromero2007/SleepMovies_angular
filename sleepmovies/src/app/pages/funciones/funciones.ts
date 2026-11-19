@@ -1,6 +1,7 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { FuncionService } from '../../services/funcion';
 import { PeliculaService } from '../../services/pelicula';
 
@@ -21,15 +22,78 @@ export class FuncionesPage implements OnInit {
   mensajeFuncion: string = '';
   errorFuncion: string = '';
 
+  // Horarios del mes
+  peliculaFiltro: number | null = null;
+  mesVista: Date = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
+
   constructor(
     private funcionService: FuncionService,
     private peliculaService: PeliculaService,
+    private route: ActivatedRoute,
     private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
     this.cargarPeliculas();
     this.cargarFunciones();
+
+    // Si llegan desde el afiche de una película: /funciones?pelicula=3
+    this.route.queryParamMap.subscribe(params => {
+      const id = Number(params.get('pelicula'));
+      this.peliculaFiltro = id > 0 ? id : null;
+      this.cdr.detectChanges();
+    });
+  }
+
+  // Funciones de la película elegida (o todas)
+  get funcionesFiltradas(): any[] {
+    return this.peliculaFiltro
+      ? this.funciones.filter(f => f.pelicula?.idpeliculas === this.peliculaFiltro)
+      : this.funciones;
+  }
+
+  // Funciones del mes que se está viendo, agrupadas por día y ordenadas por hora
+  get diasDelMes(): { clave: string; fecha: Date; items: any[] }[] {
+    const mapa = new Map<string, { clave: string; fecha: Date; items: any[] }>();
+    for (const f of this.funcionesFiltradas) {
+      if (!f.fechaHora) { continue; }
+      const fecha = new Date(f.fechaHora);
+      if (fecha.getFullYear() !== this.mesVista.getFullYear() || fecha.getMonth() !== this.mesVista.getMonth()) {
+        continue;
+      }
+      const clave = `${fecha.getFullYear()}-${fecha.getMonth() + 1}-${fecha.getDate()}`;
+      if (!mapa.has(clave)) {
+        mapa.set(clave, { clave, fecha: new Date(fecha.getFullYear(), fecha.getMonth(), fecha.getDate()), items: [] });
+      }
+      mapa.get(clave)!.items.push(f);
+    }
+    const dias = [...mapa.values()].sort((a, b) => a.fecha.getTime() - b.fecha.getTime());
+    for (const dia of dias) {
+      dia.items.sort((a, b) => new Date(a.fechaHora).getTime() - new Date(b.fechaHora).getTime());
+    }
+    return dias;
+  }
+
+  get etiquetaMes(): string {
+    return this.primeraMayuscula(this.mesVista.toLocaleDateString('es-CO', { month: 'long', year: 'numeric' }));
+  }
+
+  private primeraMayuscula(texto: string): string {
+    return texto.charAt(0).toUpperCase() + texto.slice(1);
+  }
+
+  etiquetaDia(fecha: Date): string {
+    return this.primeraMayuscula(
+      fecha.toLocaleDateString('es-CO', { weekday: 'short', day: 'numeric', month: 'short' }).replace(/\./g, '')
+    );
+  }
+
+  cambiarMes(cambio: number): void {
+    this.mesVista = new Date(this.mesVista.getFullYear(), this.mesVista.getMonth() + cambio, 1);
+  }
+
+  elegirPelicula(id: number | null): void {
+    this.peliculaFiltro = id;
   }
 
   private mensajeDeError(err: any, porDefecto: string): string {

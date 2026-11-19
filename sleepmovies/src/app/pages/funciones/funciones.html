@@ -53,8 +53,48 @@
   </form>
 </details>
 
+<!-- Horarios del mes -->
+<section class="agenda">
+  <div class="agenda-cabeza">
+    <h2>Horarios del mes</h2>
+    <div class="agenda-controles">
+      <select aria-label="Filtrar por película" [ngModel]="peliculaFiltro" (ngModelChange)="elegirPelicula($event)">
+        <option [ngValue]="null">Todas las películas</option>
+        @for (p of peliculas; track p.idpeliculas) {
+          <option [ngValue]="p.idpeliculas">{{ p.titulo }}</option>
+        }
+      </select>
+      <div class="agenda-mes">
+        <button type="button" class="btn btn-mini btn-borde" (click)="cambiarMes(-1)" aria-label="Mes anterior">&#8249;</button>
+        <strong>{{ etiquetaMes }}</strong>
+        <button type="button" class="btn btn-mini btn-borde" (click)="cambiarMes(1)" aria-label="Mes siguiente">&#8250;</button>
+      </div>
+    </div>
+  </div>
+
+  @for (dia of diasDelMes; track dia.clave) {
+    <div class="agenda-dia">
+      <div class="agenda-fecha">{{ etiquetaDia(dia.fecha) }}</div>
+      <ul class="agenda-horas">
+        @for (f of dia.items; track f.idfunciones) {
+          <li class="hora" [class.agotada]="f.cuposDisponibles === 0">
+            <strong>{{ f.fechaHora | date:'hh:mm a' }}</strong>
+            @if (!peliculaFiltro) {
+              <span class="hora-titulo">{{ f.pelicula?.titulo ?? 'Sin película' }}</span>
+            }
+            <span>{{ f.sala }}, {{ f.precio | currency:'COP':'symbol-narrow':'1.0-0' }}</span>
+            <span>{{ f.cuposDisponibles === 0 ? 'Agotada' : f.cuposDisponibles + ' cupos disponibles' }}</span>
+          </li>
+        }
+      </ul>
+    </div>
+  } @empty {
+    <p class="vacio">No hay funciones en {{ etiquetaMes }}{{ peliculaFiltro ? ' para esta película' : '' }}. Cambia de mes o elige otra película.</p>
+  }
+</section>
+
 <!-- Tabla -->
-@if (funciones.length > 0) {
+@if (funcionesFiltradas.length > 0) {
   <div class="tabla-caja">
     <table class="tabla">
       <thead>
@@ -69,7 +109,7 @@
         </tr>
       </thead>
       <tbody>
-        @for (funcion of funciones; track funcion.idfunciones) {
+        @for (funcion of funcionesFiltradas; track funcion.idfunciones) {
           <tr>
             <td>{{ funcion.idfunciones }}</td>
             <td>{{ funcion.pelicula ? funcion.pelicula.titulo : 'Sin película asignada' }}</td>

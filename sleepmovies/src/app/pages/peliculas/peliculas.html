@@ -91,6 +91,7 @@
             <img class="afiche-img" [src]="pelicula.imagen" [alt]="'Afiche de ' + pelicula.titulo" (error)="$any($event.target).style.display = 'none'">
             <span class="afiche-velo"></span>
           }
+          <a class="afiche-link" routerLink="/funciones" [queryParams]="{ pelicula: pelicula.idpeliculas }" [attr.aria-label]="'Ver funciones de ' + pelicula.titulo"></a>
           <span class="clasif">{{ pelicula.clasificacion }}</span>
           <h3>{{ pelicula.titulo }}</h3>
           <p>{{ pelicula.duracion }} min</p>
