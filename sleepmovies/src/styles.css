@@ -1,39 +1,648 @@
-.tabla {
-  border-collapse: collapse;
-  width: 100%;
-  margin: 10px 0;
+@import url('https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800&family=Hanken+Grotesk:wght@400;500;700&display=swap');
+
+/* ============ Paleta ============ */
+:root {
+  --sombra: #262423;
+  --medianoche: #402B47;
+  --lila: #8350C4;
+  --lila-claro: #B99AE6;
+  --denim: #7392B5;
+  --cielo: #C9E0EB;
+  --cielo-tenue: rgba(201, 224, 235, 0.72);
+  --linea: rgba(201, 224, 235, 0.16);
+  --exito: #8FD6B0;
+  --error: #F4A09A;
+  --fuente-titulo: 'Big Shoulders Display', 'Arial Narrow', Impact, sans-serif;
+  --fuente-texto: 'Hanken Grotesk', system-ui, -apple-system, 'Segoe UI', sans-serif;
 }
-.tabla th, .tabla td {
-  border: 1px solid #ccc;
-  padding: 8px;
-  text-align: left;
+
+/* ============ Base ============ */
+*, *::before, *::after {
+  box-sizing: border-box;
 }
-.tabla th {
-  background: #f0f0f0;
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: var(--fuente-texto);
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--cielo);
+  background-color: var(--sombra);
+  background-image:
+    radial-gradient(900px 520px at 88% -6%, rgba(131, 80, 196, 0.42), transparent 62%),
+    radial-gradient(800px 640px at -8% 34%, rgba(115, 146, 181, 0.24), transparent 62%),
+    linear-gradient(180deg, #262423 0%, #2d2330 100%);
+  background-attachment: fixed;
 }
-.item {
-  margin-bottom: 12px;
+
+h1, h2, h3 {
+  margin: 0;
 }
-.acciones {
-  margin-top: 6px;
+
+button, input, select {
+  font-family: inherit;
 }
+
+:focus-visible {
+  outline: 2px solid var(--cielo);
+  outline-offset: 2px;
+}
+
+/* ============ Barra superior y menú ============ */
+.barra {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding: 14px 32px;
+  background: rgba(38, 36, 35, 0.84);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--linea);
+}
+
+.marca {
+  font-family: var(--fuente-titulo);
+  font-weight: 800;
+  font-size: 32px;
+  line-height: 1;
+  text-decoration: none;
+  color: var(--cielo);
+}
+
+.marca span {
+  color: var(--lila-claro);
+}
+
 .menu {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.menu a {
+  padding: 8px 18px;
+  border-radius: 999px;
+  text-decoration: none;
+  font-weight: 500;
+  color: var(--cielo-tenue);
+}
+
+.menu a:hover {
+  color: var(--cielo);
+  background: rgba(201, 224, 235, 0.1);
+}
+
+.menu a.activo {
+  color: #ffffff;
+  background: var(--lila);
+}
+
+.pagina {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 36px 32px 80px;
+}
+
+/* ============ Encabezado de cada pantalla ============ */
+.encabezado {
+  margin-bottom: 28px;
+}
+
+.encabezado h1 {
+  font-family: var(--fuente-titulo);
+  font-weight: 800;
+  font-size: clamp(52px, 8vw, 96px);
+  line-height: 0.9;
+  color: var(--lila-claro);
+}
+
+.encabezado p {
+  margin: 16px 0 0;
+  max-width: 56ch;
+  color: var(--cielo-tenue);
+}
+
+/* ============ Avisos ============ */
+.aviso {
+  margin: 0 0 16px;
+  padding: 12px 16px;
+  border-radius: 10px;
+  border-left: 4px solid;
+  background: rgba(38, 36, 35, 0.6);
+}
+
+.aviso-ok {
+  color: var(--exito);
+  border-color: var(--exito);
+}
+
+.aviso-error {
+  color: var(--error);
+  border-color: var(--error);
+}
+
+/* ============ Paneles y formularios ============ */
+.panel {
+  margin-bottom: 20px;
+  padding: 20px 22px;
+  background: rgba(64, 43, 71, 0.58);
+  border: 1px solid var(--linea);
+  border-radius: 16px;
+}
+
+.panel h3 {
+  margin-bottom: 14px;
+  font-family: var(--fuente-titulo);
+  font-weight: 800;
+  font-size: 28px;
+  line-height: 1;
+}
+
+details.panel > summary {
+  cursor: pointer;
+  list-style: none;
+  font-family: var(--fuente-titulo);
+  font-weight: 800;
+  font-size: 26px;
+  line-height: 1;
+}
+
+details.panel > summary::-webkit-details-marker {
+  display: none;
+}
+
+details.panel > summary::before {
+  content: '+';
+  display: inline-block;
+  width: 28px;
+  color: var(--lila-claro);
+}
+
+details.panel[open] > summary::before {
+  content: '\2212';
+}
+
+details.panel[open] > summary {
+  margin-bottom: 18px;
+}
+
+.campos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.campo-ancho {
+  grid-column: 1 / -1;
+}
+
+label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--cielo-tenue);
+}
+
+input, select {
+  width: 100%;
+  padding: 10px 12px;
+  color: var(--cielo);
+  background: rgba(38, 36, 35, 0.78);
+  border: 1px solid rgba(201, 224, 235, 0.24);
+  border-radius: 10px;
+  font-size: 16px;
+}
+
+input::placeholder {
+  color: rgba(201, 224, 235, 0.45);
+}
+
+input:focus, select:focus {
+  outline: 2px solid var(--lila);
+  outline-offset: 1px;
+  border-color: var(--lila);
+}
+
+select option {
+  background: var(--sombra);
+  color: var(--cielo);
+}
+
+input[type='date'], input[type='datetime-local'] {
+  color-scheme: dark;
+}
+
+.acciones-form {
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
-  margin: 15px 0 25px;
+  margin-top: 20px;
 }
-.menu a {
-  padding: 8px 14px;
-  border: 1px solid #4a90d9;
+
+/* ============ Botones ============ */
+button {
+  cursor: pointer;
+}
+
+.btn {
+  padding: 10px 20px;
+  color: #ffffff;
+  background: var(--lila);
+  border: 1px solid var(--lila);
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.btn:hover {
+  background: #9461d6;
+  border-color: #9461d6;
+}
+
+.btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.btn-borde {
+  color: var(--cielo);
+  background: transparent;
+  border-color: rgba(201, 224, 235, 0.4);
+}
+
+.btn-borde:hover {
+  background: rgba(201, 224, 235, 0.12);
+  border-color: var(--cielo);
+}
+
+.btn-mini {
+  padding: 6px 12px;
+  font-size: 13px;
+  border-radius: 8px;
+}
+
+/* ============ Herramientas de películas: géneros y búsqueda ============ */
+.herramientas {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px 24px;
+  flex-wrap: wrap;
+  margin: 8px 0 4px;
+}
+
+.chips {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.chip {
+  padding: 7px 16px;
+  color: var(--cielo);
+  background: transparent;
+  border: 1px solid rgba(201, 224, 235, 0.32);
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.chip:hover {
+  background: rgba(201, 224, 235, 0.12);
+}
+
+.chip.activo {
+  color: var(--sombra);
+  background: var(--cielo);
+  border-color: var(--cielo);
+}
+
+.buscador-id {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.buscador-id label {
+  margin: 0;
+  white-space: nowrap;
+}
+
+.buscador-id input {
+  width: 96px;
+}
+
+.resultado-busqueda {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin: 16px 0 0;
+  padding: 16px 20px;
+  background: rgba(115, 146, 181, 0.16);
+  border: 1px solid var(--denim);
+  border-radius: 12px;
+}
+
+.resultado-busqueda h3 {
+  font-family: var(--fuente-titulo);
+  font-weight: 800;
+  font-size: 30px;
+  line-height: 1;
+}
+
+.resultado-busqueda p {
+  margin: 4px 0 0;
+  color: var(--cielo-tenue);
+}
+
+/* ============ Bandas por género ============ */
+.banda {
+  display: grid;
+  grid-template-columns: minmax(200px, 290px) minmax(0, 1fr);
+  gap: 28px;
+  padding: 36px 0;
+  border-top: 1px solid var(--linea);
+}
+
+.banda-cabeza h2 {
+  font-family: var(--fuente-titulo);
+  font-weight: 800;
+  font-size: clamp(40px, 4.4vw, 60px);
+  line-height: 0.92;
+  color: var(--lila-claro);
+  overflow-wrap: break-word;
+}
+
+.banda-cabeza p {
+  margin: 10px 0 0;
+  color: var(--cielo-tenue);
+}
+
+.carrusel {
+  display: flex;
+  gap: 16px;
+  margin: 0;
+  padding: 0 0 16px;
+  list-style: none;
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+  scrollbar-color: var(--denim) transparent;
+}
+
+.afiche {
+  position: relative;
+  display: flex;
+  flex: 0 0 212px;
+  flex-direction: column;
+  justify-content: flex-end;
+  min-height: 300px;
+  padding: 16px 14px 14px;
+  color: var(--cielo);
   border-radius: 6px;
-  text-decoration: none;
-  color: #4a90d9;
+  scroll-snap-align: start;
+  background: linear-gradient(165deg, #8350C4 0%, #402B47 88%);
 }
-.menu a:hover {
-  background: #e8f1fb;
+
+.afiche[data-tono='1'] {
+  background: linear-gradient(165deg, #7392B5 0%, #402B47 92%);
 }
-.menu a.activo {
-  background: #4a90d9;
-  color: white;
+
+.afiche[data-tono='2'] {
+  background: linear-gradient(165deg, #402B47 0%, #262423 100%);
+  box-shadow: inset 0 0 0 1px rgba(201, 224, 235, 0.22);
+}
+
+.afiche-img {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 6px;
+}
+
+.afiche-velo {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: 6px;
+  background: linear-gradient(180deg, rgba(38, 36, 35, 0.05) 28%, rgba(38, 36, 35, 0.92) 100%);
+}
+
+.afiche h3,
+.afiche p,
+.afiche .afiche-acciones {
+  position: relative;
+  z-index: 1;
+}
+
+.clasif {
+  z-index: 1;
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  padding: 2px 8px;
+  font-size: 12px;
+  font-weight: 700;
+  background: rgba(38, 36, 35, 0.4);
+  border: 1px solid currentColor;
+  border-radius: 4px;
+}
+
+.afiche h3 {
+  font-family: var(--fuente-titulo);
+  font-weight: 800;
+  font-size: 30px;
+  line-height: 0.95;
+  overflow-wrap: break-word;
+}
+
+.afiche p {
+  margin: 6px 0 0;
+  font-size: 14px;
+  color: var(--cielo-tenue);
+}
+
+.afiche-acciones {
+  display: flex;
+  gap: 6px;
+  margin-top: 12px;
+}
+
+.sin-resultados {
+  padding: 36px 0;
+  color: var(--cielo-tenue);
+  border-top: 1px solid var(--linea);
+}
+
+/* ============ Tablas ============ */
+.tabla-caja {
+  overflow-x: auto;
+  margin-top: 8px;
+  border: 1px solid var(--linea);
+  border-radius: 14px;
+}
+
+.tabla {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.tabla th {
+  padding: 13px 16px;
+  text-align: left;
+  font-size: 14px;
+  font-weight: 700;
+  white-space: nowrap;
+  background: var(--medianoche);
+}
+
+.tabla td {
+  padding: 13px 16px;
+  border-top: 1px solid var(--linea);
+}
+
+.tabla tbody tr:hover td {
+  background: rgba(131, 80, 196, 0.14);
+}
+
+.tabla .num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.tabla .acciones-fila {
+  display: flex;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+/* ============ Compra de boletas ============ */
+.dos-columnas {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+  gap: 24px;
+  align-items: start;
+}
+
+.resumen-venta {
+  background: linear-gradient(165deg, rgba(131, 80, 196, 0.5) 0%, rgba(64, 43, 71, 0.7) 70%);
+}
+
+.resumen-venta dl {
+  margin: 0 0 18px;
+}
+
+.resumen-venta dt {
+  margin-top: 12px;
+  font-size: 14px;
+  color: var(--cielo-tenue);
+}
+
+.resumen-venta dd {
+  margin: 2px 0 0;
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.total-venta {
+  font-family: var(--fuente-titulo);
+  font-weight: 800;
+  font-size: clamp(52px, 7vw, 84px);
+  line-height: 0.95;
+  color: #ffffff;
+}
+
+.vacio {
+  margin: 0;
+  color: var(--cielo-tenue);
+}
+
+/* ============ Historial ============ */
+.filtro-fechas {
+  display: flex;
+  align-items: flex-end;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.filtro-fechas > div {
+  min-width: 180px;
+}
+
+.datos {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin: 20px 0;
+}
+
+.dato {
+  padding: 16px 20px;
+  background: rgba(64, 43, 71, 0.58);
+  border: 1px solid var(--linea);
+  border-radius: 16px;
+}
+
+.dato strong {
+  display: block;
+  font-family: var(--fuente-titulo);
+  font-weight: 800;
+  font-size: 46px;
+  line-height: 1;
+}
+
+.dato span {
+  color: var(--cielo-tenue);
+  font-size: 14px;
+}
+
+.nota {
+  margin: 0 0 12px;
+  color: var(--cielo-tenue);
+}
+
+/* ============ Pie ============ */
+.pie {
+  padding: 24px 32px 40px;
+  text-align: center;
+  font-size: 14px;
+  color: rgba(201, 224, 235, 0.5);
+}
+
+/* ============ Pantallas pequeñas ============ */
+@media (max-width: 860px) {
+  .barra {
+    padding: 12px 18px;
+  }
+  .pagina {
+    padding: 24px 18px 60px;
+  }
+  .banda {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    padding: 28px 0;
+  }
+  .dos-columnas {
+    grid-template-columns: 1fr;
+  }
+  .datos {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    scroll-behavior: auto !important;
+    transition: none !important;
+  }
 }

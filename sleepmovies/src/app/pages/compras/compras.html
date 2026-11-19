@@ -1,41 +1,62 @@
-<h2>🎟️ Compra de Boletas</h2>
+<header class="encabezado">
+  <h1>Compra de boletas</h1>
+  <p>Elige la función, escribe el nombre del cliente y la cantidad. El total se calcula al instante.</p>
+</header>
 
 @if (errorConexion) {
-  <p style="color: red;">{{ errorConexion }}</p>
+  <p class="aviso aviso-error">{{ errorConexion }}</p>
 }
 @if (mensajeCompra) {
-  <p style="color: green;">{{ mensajeCompra }}</p>
+  <p class="aviso aviso-ok">{{ mensajeCompra }}</p>
 }
 @if (errorCompra) {
-  <p style="color: red;">{{ errorCompra }}</p>
+  <p class="aviso aviso-error">{{ errorCompra }}</p>
 }
 
-<form (ngSubmit)="comprarBoletas()" style="margin: 10px 0; padding: 10px; border: 1px solid #ccc; max-width: 420px;">
-  <label>Función</label><br>
-  <select name="idFuncion" [(ngModel)]="compraForm.idFuncion" style="width: 100%;">
-    <option [ngValue]="null">-- Selecciona una función --</option>
-    @for (f of funciones; track f.idfunciones) {
-      <option [ngValue]="f.idfunciones">{{ f.pelicula?.titulo ?? 'Sin película' }} | {{ f.sala }} | {{ f.fechaHora | date:'dd/MM/yyyy, hh:mm a' }}</option>
+<div class="dos-columnas">
+  <form class="panel" (ngSubmit)="comprarBoletas()">
+    <div class="campos">
+      <div class="campo-ancho">
+        <label for="com-funcion">Función</label>
+        <select id="com-funcion" name="idFuncion" [(ngModel)]="compraForm.idFuncion">
+          <option [ngValue]="null">Selecciona una función</option>
+          @for (f of funciones; track f.idfunciones) {
+            <option [ngValue]="f.idfunciones">{{ f.pelicula?.titulo ?? 'Sin película' }} | {{ f.sala }} | {{ f.fechaHora | date:'dd/MM/yyyy, hh:mm a' }}</option>
+          }
+        </select>
+      </div>
+      <div class="campo-ancho">
+        <label for="com-cliente">Nombre del cliente</label>
+        <input id="com-cliente" name="nombreCliente" [(ngModel)]="compraForm.nombreCliente" maxlength="100">
+      </div>
+      <div class="campo-ancho">
+        <label for="com-cantidad">Cantidad de boletas</label>
+        <input id="com-cantidad" name="cantidadBoletas" type="number" min="1" [(ngModel)]="compraForm.cantidadBoletas">
+      </div>
+    </div>
+    <div class="acciones-form">
+      <button class="btn" type="submit" [disabled]="enviandoCompra">Comprar boletas</button>
+    </div>
+  </form>
+
+  <aside class="panel resumen-venta">
+    <h3>Resumen de la venta</h3>
+    @if (funcionSeleccionada) {
+      <dl>
+        <dt>Película</dt>
+        <dd>{{ funcionSeleccionada.pelicula?.titulo ?? 'Sin película' }}</dd>
+        <dt>Precio por boleta</dt>
+        <dd>{{ funcionSeleccionada.precio | currency:'COP':'symbol-narrow':'1.0-0' }}</dd>
+        <dt>Cupos disponibles</dt>
+        <dd>{{ funcionSeleccionada.cuposDisponibles }}</dd>
+      </dl>
+      @if (totalCalculado > 0) {
+        <div class="total-venta">{{ totalCalculado | currency:'COP':'symbol-narrow':'1.0-0' }}</div>
+      } @else {
+        <p class="vacio">Escribe la cantidad de boletas para ver el total.</p>
+      }
+    } @else {
+      <p class="vacio">Elige una función para ver el precio y los cupos.</p>
     }
-  </select>
-
-  @if (funcionSeleccionada) {
-    <p style="margin: 6px 0;">
-      Precio por boleta: <strong>{{ funcionSeleccionada.precio | currency:'COP':'symbol-narrow':'1.0-0' }}</strong> |
-      Cupos disponibles: <strong>{{ funcionSeleccionada.cuposDisponibles }}</strong>
-    </p>
-  }
-  <br>
-
-  <label>Nombre del cliente</label><br>
-  <input name="nombreCliente" [(ngModel)]="compraForm.nombreCliente" maxlength="100" style="width: 100%;"><br><br>
-
-  <label>Cantidad de boletas</label><br>
-  <input name="cantidadBoletas" type="number" min="1" [(ngModel)]="compraForm.cantidadBoletas" style="width: 100%;"><br><br>
-
-  @if (totalCalculado > 0) {
-    <p style="font-size: 18px;">Valor total: <strong>{{ totalCalculado | currency:'COP':'symbol-narrow':'1.0-0' }}</strong></p>
-  }
-
-  <button type="submit" [disabled]="enviandoCompra">Comprar boletas</button>
-</form>
+  </aside>
+</div>

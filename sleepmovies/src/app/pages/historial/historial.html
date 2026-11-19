@@ -1,70 +1,87 @@
-<h2>🛒 Historial de Compras</h2>
+<header class="encabezado">
+  <h1>Historial de compras</h1>
+  <p>Consulta las ventas de un día o de un rango de fechas.</p>
+</header>
 
 @if (errorConexion) {
-  <p style="color: red;">{{ errorConexion }}</p>
+  <p class="aviso aviso-error">{{ errorConexion }}</p>
+}
+@if (errorHistorial) {
+  <p class="aviso aviso-error">{{ errorHistorial }}</p>
 }
 
-<div style="margin: 10px 0; padding: 10px; border: 1px solid #ccc; max-width: 620px;">
-  <label>Desde: </label>
-  <input type="date" [(ngModel)]="fechaDesde">
-  <label> Hasta: </label>
-  <input type="date" [(ngModel)]="fechaHasta">
-  <br><br>
-  <button type="button" (click)="consultarHistorial()">Consultar</button>
-  <button type="button" (click)="consultarHoy()">Solo hoy</button>
-  <button type="button" (click)="verTodasLasCompras()">Ver todas</button>
+<div class="panel">
+  <div class="filtro-fechas">
+    <div>
+      <label for="his-desde">Desde</label>
+      <input id="his-desde" type="date" [(ngModel)]="fechaDesde">
+    </div>
+    <div>
+      <label for="his-hasta">Hasta</label>
+      <input id="his-hasta" type="date" [(ngModel)]="fechaHasta">
+    </div>
+    <button type="button" class="btn" (click)="consultarHistorial()">Consultar</button>
+    <button type="button" class="btn btn-borde" (click)="consultarHoy()">Solo hoy</button>
+    <button type="button" class="btn btn-borde" (click)="verTodasLasCompras()">Ver todas</button>
+  </div>
 </div>
 
-@if (errorHistorial) {
-  <p style="color: red;">{{ errorHistorial }}</p>
+@if (filtroActivo) {
+  <p class="nota">Mostrando las compras del {{ fechaDesde | date:'dd/MM/yyyy' }} al {{ fechaHasta | date:'dd/MM/yyyy' }}.</p>
 }
 
-@if (filtroActivo) {
-  <p>Mostrando compras del <strong>{{ fechaDesde | date:'dd/MM/yyyy' }}</strong> al <strong>{{ fechaHasta | date:'dd/MM/yyyy' }}</strong></p>
-}
+<div class="datos">
+  <div class="dato">
+    <strong>{{ compras.length }}</strong>
+    <span>Compras</span>
+  </div>
+  <div class="dato">
+    <strong>{{ totalBoletas }}</strong>
+    <span>Boletas vendidas</span>
+  </div>
+  <div class="dato">
+    <strong>{{ totalVentas | currency:'COP':'symbol-narrow':'1.0-0' }}</strong>
+    <span>Total vendido</span>
+  </div>
+</div>
 
 @if (compras.length > 0) {
-  <table class="tabla">
-    <thead>
-      <tr>
-        <th>Fecha de compra</th>
-        <th>Cliente</th>
-        <th>Película</th>
-        <th>Función</th>
-        <th>Boletas</th>
-        <th>Total</th>
-      </tr>
-    </thead>
-    <tbody>
-      @for (compra of compras; track compra.idcompras) {
+  <div class="tabla-caja">
+    <table class="tabla">
+      <thead>
         <tr>
-          <td>{{ compra.fechaCompra | date:'dd/MM/yyyy, hh:mm a' }}</td>
-          <td>{{ compra.nombreCliente }}</td>
-          <td>{{ compra.funcion?.pelicula?.titulo }}</td>
-          <td>
-            @if (compra.funcion) {
-              <span>{{ compra.funcion.sala }} | {{ compra.funcion.fechaHora | date:'dd/MM/yyyy, hh:mm a' }}</span>
-            }
-          </td>
-          <td>{{ compra.cantidadBoletas }}</td>
-          <td>{{ compra.valorTotal | currency:'COP':'symbol-narrow':'1.0-0' }}</td>
+          <th>Fecha de compra</th>
+          <th>Cliente</th>
+          <th>Película</th>
+          <th>Función</th>
+          <th class="num">Boletas</th>
+          <th class="num">Total</th>
         </tr>
-      }
-    </tbody>
-  </table>
-  <p style="margin-top: 10px;">
-    Compras: <strong>{{ compras.length }}</strong> |
-    Boletas: <strong>{{ totalBoletas }}</strong> |
-    Total vendido: <strong>{{ totalVentas | currency:'COP':'symbol-narrow':'1.0-0' }}</strong>
-  </p>
+      </thead>
+      <tbody>
+        @for (compra of compras; track compra.idcompras) {
+          <tr>
+            <td>{{ compra.fechaCompra | date:'dd/MM/yyyy, hh:mm a' }}</td>
+            <td>{{ compra.nombreCliente }}</td>
+            <td>{{ compra.funcion?.pelicula?.titulo }}</td>
+            <td>
+              @if (compra.funcion) {
+                {{ compra.funcion.sala }}, {{ compra.funcion.fechaHora | date:'dd/MM/yyyy, hh:mm a' }}
+              }
+            </td>
+            <td class="num">{{ compra.cantidadBoletas }}</td>
+            <td class="num">{{ compra.valorTotal | currency:'COP':'symbol-narrow':'1.0-0' }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
 } @else {
   @if (cargandoCompras) {
-    <p>Cargando historial...</p>
+    <p class="vacio">Cargando historial...</p>
+  } @else if (filtroActivo) {
+    <p class="vacio">No hay compras en ese rango de fechas. Prueba con otras fechas o pulsa "Ver todas".</p>
   } @else {
-    @if (filtroActivo) {
-      <p>No hay compras en ese rango de fechas.</p>
-    } @else {
-      <p>No hay compras registradas todavía.</p>
-    }
+    <p class="vacio">Aún no hay compras registradas.</p>
   }
 }

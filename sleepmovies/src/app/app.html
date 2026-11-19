@@ -1,12 +1,15 @@
-<div style="padding: 20px; font-family: Arial, sans-serif;">
-  <h1>🎬 Sleep Movies </h1>
-
+<header class="barra">
+  <a class="marca" routerLink="/peliculas">Sleep<span>Movies</span></a>
   <nav class="menu">
-    <a routerLink="/peliculas" routerLinkActive="activo">🎞️ Películas</a>
-    <a routerLink="/funciones" routerLinkActive="activo">🎬 Funciones</a>
-    <a routerLink="/compras" routerLinkActive="activo">🎟️ Compra de boletas</a>
-    <a routerLink="/historial" routerLinkActive="activo">🛒 Historial</a>
+    <a routerLink="/peliculas" routerLinkActive="activo">Películas</a>
+    <a routerLink="/funciones" routerLinkActive="activo">Funciones</a>
+    <a routerLink="/compras" routerLinkActive="activo">Compra de boletas</a>
+    <a routerLink="/historial" routerLinkActive="activo">Historial</a>
   </nav>
+</header>
 
+<main class="pagina">
   <router-outlet></router-outlet>
-</div>
+</main>
+
+<footer class="pie">Sleep Movies, cartelera y taquilla</footer>

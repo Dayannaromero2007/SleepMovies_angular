@@ -1,79 +1,117 @@
-<h2>🎞️ Películas</h2>
+<header class="encabezado">
+  <h1>Películas</h1>
+  <p>La cartelera, agrupada por género para encontrar cada título más rápido.</p>
+</header>
 
 @if (errorConexion) {
-  <p style="color: red;">{{ errorConexion }}</p>
+  <p class="aviso aviso-error">{{ errorConexion }}</p>
 }
 @if (mensajePelicula) {
-  <p style="color: green;">{{ mensajePelicula }}</p>
+  <p class="aviso aviso-ok">{{ mensajePelicula }}</p>
 }
 @if (errorPelicula) {
-  <p style="color: red;">{{ errorPelicula }}</p>
+  <p class="aviso aviso-error">{{ errorPelicula }}</p>
 }
 
-<!-- Buscar por ID -->
-<div style="margin: 10px 0;">
-  <label>Buscar por ID: </label>
-  <input type="number" [(ngModel)]="idBusqueda" min="1" style="width: 80px;">
-  <button type="button" (click)="buscarPelicula()">Buscar</button>
-  <button type="button" (click)="limpiarBusqueda()">Limpiar</button>
+<!-- Formulario crear / editar -->
+<details class="panel" [open]="editandoPelicula">
+  <summary>{{ editandoPelicula ? 'Editar película (ID ' + peliculaForm.idpeliculas + ')' : 'Agregar película' }}</summary>
+  <form (ngSubmit)="guardarPelicula()">
+    <div class="campos">
+      <div class="campo-ancho">
+        <label for="pel-titulo">Título</label>
+        <input id="pel-titulo" name="titulo" [(ngModel)]="peliculaForm.titulo" maxlength="100">
+      </div>
+      <div>
+        <label for="pel-genero">Género</label>
+        <input id="pel-genero" name="genero" [(ngModel)]="peliculaForm.genero" maxlength="45">
+      </div>
+      <div>
+        <label for="pel-duracion">Duración (minutos)</label>
+        <input id="pel-duracion" name="duracion" type="number" min="1" [(ngModel)]="peliculaForm.duracion">
+      </div>
+      <div>
+        <label for="pel-clasificacion">Clasificación</label>
+        <input id="pel-clasificacion" name="clasificacion" [(ngModel)]="peliculaForm.clasificacion" maxlength="10">
+      </div>
+      <div class="campo-ancho">
+        <label for="pel-imagen">Imagen del afiche (opcional)</label>
+        <input id="pel-imagen" name="imagen" [(ngModel)]="peliculaForm.imagen" maxlength="500" placeholder="posters/terror1.jpg o un enlace https://...">
+      </div>
+    </div>
+    <div class="acciones-form">
+      <button class="btn" type="submit">{{ editandoPelicula ? 'Guardar cambios' : 'Crear película' }}</button>
+      @if (editandoPelicula) {
+        <button class="btn btn-borde" type="button" (click)="cancelarEdicionPelicula()">Cancelar</button>
+      }
+    </div>
+  </form>
+</details>
+
+<!-- Géneros y búsqueda por ID -->
+<div class="herramientas">
+  <div class="chips">
+    <button type="button" class="chip" [class.activo]="generoFiltro === ''" (click)="filtrarGenero('')">Todas</button>
+    @for (g of grupos; track g.clave) {
+      <button type="button" class="chip" [class.activo]="generoFiltro === g.clave" (click)="filtrarGenero(g.clave)">{{ g.genero }}</button>
+    }
+  </div>
+  <div class="buscador-id">
+    <label for="pel-id">Buscar por ID</label>
+    <input id="pel-id" type="number" min="1" [(ngModel)]="idBusqueda">
+    <button type="button" class="btn btn-mini" (click)="buscarPelicula()">Buscar</button>
+    <button type="button" class="btn btn-mini btn-borde" (click)="limpiarBusqueda()">Limpiar</button>
+  </div>
 </div>
 
 @if (peliculaBuscada) {
-  <div style="margin: 10px 0; padding: 10px; border: 2px solid #4a90d9; max-width: 520px;">
-    <strong>Resultado de la búsqueda (ID {{ peliculaBuscada.idpeliculas }})</strong><br>
-    <strong>{{ peliculaBuscada.titulo }}</strong><br>
-    <span>Género: {{ peliculaBuscada.genero }}</span> |
-    <span>Duración: {{ peliculaBuscada.duracion }} min</span> |
-    <span>Clasificación: {{ peliculaBuscada.clasificacion }}</span>
-    <div class="acciones">
-      <button type="button" (click)="editarPelicula(peliculaBuscada)">Editar</button>
-      <button type="button" (click)="eliminarPelicula(peliculaBuscada.idpeliculas)">Eliminar</button>
+  <div class="resultado-busqueda">
+    <div>
+      <h3>{{ peliculaBuscada.titulo }}</h3>
+      <p>ID {{ peliculaBuscada.idpeliculas }}, {{ peliculaBuscada.genero }}, {{ peliculaBuscada.duracion }} min, clasificación {{ peliculaBuscada.clasificacion }}</p>
+    </div>
+    <div class="afiche-acciones">
+      <button type="button" class="btn btn-mini" (click)="editarPelicula(peliculaBuscada)">Editar</button>
+      <button type="button" class="btn btn-mini btn-borde" (click)="eliminarPelicula(peliculaBuscada.idpeliculas)">Eliminar</button>
     </div>
   </div>
 }
 
-<!-- Formulario crear / editar -->
-<form (ngSubmit)="guardarPelicula()" style="margin: 10px 0; padding: 10px; border: 1px solid #ccc; max-width: 420px;">
-  <h3>{{ editandoPelicula ? 'Editar película (ID ' + peliculaForm.idpeliculas + ')' : 'Nueva película' }}</h3>
-
-  <label>Título</label><br>
-  <input name="titulo" [(ngModel)]="peliculaForm.titulo" maxlength="100" style="width: 100%;"><br><br>
-
-  <label>Género</label><br>
-  <input name="genero" [(ngModel)]="peliculaForm.genero" maxlength="45" style="width: 100%;"><br><br>
-
-  <label>Duración (minutos)</label><br>
-  <input name="duracion" type="number" min="1" [(ngModel)]="peliculaForm.duracion" style="width: 100%;"><br><br>
-
-  <label>Clasificación</label><br>
-  <input name="clasificacion" [(ngModel)]="peliculaForm.clasificacion" maxlength="10" style="width: 100%;"><br><br>
-
-  <button type="submit">{{ editandoPelicula ? 'Guardar cambios' : 'Crear película' }}</button>
-  @if (editandoPelicula) {
-    <button type="button" (click)="cancelarEdicionPelicula()">Cancelar</button>
-  }
-</form>
-
-<!-- Lista -->
-@if (peliculas.length > 0) {
-  <ul>
-    @for (pelicula of peliculas; track pelicula.idpeliculas) {
-      <li class="item">
-        <strong>{{ pelicula.titulo }}</strong> (ID {{ pelicula.idpeliculas }})<br>
-        <span>Género: {{ pelicula.genero }}</span> |
-        <span>Duración: {{ pelicula.duracion }} min</span> |
-        <span>Clasificación: {{ pelicula.clasificacion }}</span>
-        <div class="acciones">
-          <button type="button" (click)="editarPelicula(pelicula)">Editar</button>
-          <button type="button" (click)="eliminarPelicula(pelicula.idpeliculas)">Eliminar</button>
-        </div>
-      </li>
+<!-- Una banda por género -->
+@for (grupo of gruposVisibles; track grupo.clave) {
+  <section class="banda">
+    <div class="banda-cabeza">
+      <h2>{{ grupo.genero }}</h2>
+      <p>{{ grupo.items.length }} {{ grupo.items.length === 1 ? 'película' : 'películas' }}</p>
+    </div>
+    <ul class="carrusel">
+      @for (pelicula of grupo.items; track pelicula.idpeliculas) {
+        <li class="afiche" [attr.data-tono]="$index % 3">
+          @if (pelicula.imagen) {
+            <img class="afiche-img" [src]="pelicula.imagen" [alt]="'Afiche de ' + pelicula.titulo" (error)="$any($event.target).style.display = 'none'">
+            <span class="afiche-velo"></span>
+          }
+          <span class="clasif">{{ pelicula.clasificacion }}</span>
+          <h3>{{ pelicula.titulo }}</h3>
+          <p>{{ pelicula.duracion }} min</p>
+          <p>ID {{ pelicula.idpeliculas }}</p>
+          <div class="afiche-acciones">
+            <button type="button" class="btn btn-mini" (click)="editarPelicula(pelicula)">Editar</button>
+            <button type="button" class="btn btn-mini btn-borde" (click)="eliminarPelicula(pelicula.idpeliculas)">Eliminar</button>
+          </div>
+        </li>
+      }
+    </ul>
+  </section>
+} @empty {
+  <div class="sin-resultados">
+    @if (cargandoPeliculas) {
+      <p>Cargando películas...</p>
+    } @else if (peliculas.length > 0) {
+      <p>No quedan películas de este género.</p>
+      <button type="button" class="btn btn-borde" (click)="filtrarGenero('')">Ver todas</button>
+    } @else {
+      <p>Aún no hay películas. Usa "Agregar película" para crear la primera.</p>
     }
-  </ul>
-} @else {
-  @if (cargandoPeliculas) {
-    <p>Cargando películas o esperando conexión con el servidor...</p>
-  } @else {
-    <p>No hay películas registradas todavía.</p>
-  }
+  </div>
 }

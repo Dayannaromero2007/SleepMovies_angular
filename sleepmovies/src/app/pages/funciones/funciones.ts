@@ -156,6 +156,7 @@ export class FuncionesPage implements OnInit {
     };
     this.editandoFuncion = true;
     this.cdr.detectChanges();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   cancelarEdicionFuncion(limpiarMensajes: boolean = true): void {

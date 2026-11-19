@@ -14,17 +14,47 @@ export class PeliculasPage implements OnInit {
   cargandoPeliculas: boolean = true;
   errorConexion: string = '';
 
-  peliculaForm: any = { titulo: '', genero: '', duracion: null, clasificacion: '' };
+  peliculaForm: any = { titulo: '', genero: '', duracion: null, clasificacion: '', imagen: '' };
   editandoPelicula: boolean = false;
   idBusqueda: number | null = null;
   peliculaBuscada: any = null;
   mensajePelicula: string = '';
   errorPelicula: string = '';
+  generoFiltro: string = '';
 
   constructor(
     private peliculaService: PeliculaService,
     private cdr: ChangeDetectorRef
   ) {}
+
+  // Películas agrupadas por género (una banda por cada género)
+  get grupos(): { clave: string; genero: string; items: any[] }[] {
+    const mapa = new Map<string, { clave: string; genero: string; items: any[] }>();
+    for (const p of this.peliculas) {
+      const nombre = (p.genero || 'Sin género').trim();
+      const clave = nombre.toLowerCase();
+      if (!mapa.has(clave)) {
+        mapa.set(clave, {
+          clave,
+          genero: nombre.charAt(0).toUpperCase() + nombre.slice(1).toLowerCase(),
+          items: []
+        });
+      }
+      mapa.get(clave)!.items.push(p);
+    }
+    return [...mapa.values()].sort((a, b) => a.genero.localeCompare(b.genero, 'es'));
+  }
+
+  // Las bandas que se muestran, según el género elegido en los botones
+  get gruposVisibles(): { clave: string; genero: string; items: any[] }[] {
+    return this.generoFiltro
+      ? this.grupos.filter(g => g.clave === this.generoFiltro)
+      : this.grupos;
+  }
+
+  filtrarGenero(clave: string): void {
+    this.generoFiltro = clave;
+  }
 
   ngOnInit(): void {
     this.cargarPeliculas();
@@ -40,7 +70,7 @@ export class PeliculasPage implements OnInit {
   }
 
   private formularioPeliculaVacio(): any {
-    return { titulo: '', genero: '', duracion: null, clasificacion: '' };
+    return { titulo: '', genero: '', duracion: null, clasificacion: '', imagen: '' };
   }
 
   cargarPeliculas(): void {
@@ -105,7 +135,8 @@ export class PeliculasPage implements OnInit {
       titulo: p.titulo.trim(),
       genero: p.genero.trim(),
       duracion: Number(p.duracion),
-      clasificacion: p.clasificacion.trim()
+      clasificacion: p.clasificacion.trim(),
+      imagen: p.imagen?.trim() || null
     };
 
     if (this.editandoPelicula) {

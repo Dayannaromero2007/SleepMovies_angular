@@ -1,86 +1,97 @@
-<h2>🎬 Funciones</h2>
+<header class="encabezado">
+  <h1>Funciones</h1>
+  <p>Cada función es una proyección de una película, con su sala, hora, precio y cupos.</p>
+</header>
 
 @if (errorConexion) {
-  <p style="color: red;">{{ errorConexion }}</p>
+  <p class="aviso aviso-error">{{ errorConexion }}</p>
 }
 @if (mensajeFuncion) {
-  <p style="color: green;">{{ mensajeFuncion }}</p>
+  <p class="aviso aviso-ok">{{ mensajeFuncion }}</p>
 }
 @if (errorFuncion) {
-  <p style="color: red;">{{ errorFuncion }}</p>
+  <p class="aviso aviso-error">{{ errorFuncion }}</p>
 }
 
 <!-- Formulario crear / editar -->
-<form (ngSubmit)="guardarFuncion()" style="margin: 10px 0; padding: 10px; border: 1px solid #ccc; max-width: 420px;">
-  <h3>{{ editandoFuncion ? 'Editar función (ID ' + funcionForm.idfunciones + ')' : 'Nueva función' }}</h3>
-
-  <label>Película</label><br>
-  <select name="idPelicula" [(ngModel)]="funcionForm.idPelicula" style="width: 100%;">
-    <option [ngValue]="null">-- Selecciona una película --</option>
-    @for (p of peliculas; track p.idpeliculas) {
-      <option [ngValue]="p.idpeliculas">{{ p.titulo }}</option>
-    }
-  </select><br><br>
-
-  <label>Fecha y hora</label><br>
-  <input name="fechaHora" type="datetime-local" [(ngModel)]="funcionForm.fechaHora" style="width: 100%;"><br><br>
-
-  <label>Sala</label><br>
-  <input name="sala" [(ngModel)]="funcionForm.sala" maxlength="45" style="width: 100%;"><br><br>
-
-  <label>Precio (COP)</label><br>
-  <input name="precio" type="number" min="0" [(ngModel)]="funcionForm.precio" style="width: 100%;"><br><br>
-
-  <label>Cupos disponibles</label><br>
-  <input name="cuposDisponibles" type="number" min="0" [(ngModel)]="funcionForm.cuposDisponibles" style="width: 100%;"><br><br>
-
-  <button type="submit">{{ editandoFuncion ? 'Guardar cambios' : 'Crear función' }}</button>
-  @if (editandoFuncion) {
-    <button type="button" (click)="cancelarEdicionFuncion()">Cancelar</button>
-  }
-</form>
+<details class="panel" [open]="editandoFuncion">
+  <summary>{{ editandoFuncion ? 'Editar función (ID ' + funcionForm.idfunciones + ')' : 'Agregar función' }}</summary>
+  <form (ngSubmit)="guardarFuncion()">
+    <div class="campos">
+      <div class="campo-ancho">
+        <label for="fun-pelicula">Película</label>
+        <select id="fun-pelicula" name="idPelicula" [(ngModel)]="funcionForm.idPelicula">
+          <option [ngValue]="null">Selecciona una película</option>
+          @for (p of peliculas; track p.idpeliculas) {
+            <option [ngValue]="p.idpeliculas">{{ p.titulo }}</option>
+          }
+        </select>
+      </div>
+      <div>
+        <label for="fun-fecha">Fecha y hora</label>
+        <input id="fun-fecha" name="fechaHora" type="datetime-local" [(ngModel)]="funcionForm.fechaHora">
+      </div>
+      <div>
+        <label for="fun-sala">Sala</label>
+        <input id="fun-sala" name="sala" [(ngModel)]="funcionForm.sala" maxlength="45">
+      </div>
+      <div>
+        <label for="fun-precio">Precio (COP)</label>
+        <input id="fun-precio" name="precio" type="number" min="0" [(ngModel)]="funcionForm.precio">
+      </div>
+      <div>
+        <label for="fun-cupos">Cupos disponibles</label>
+        <input id="fun-cupos" name="cuposDisponibles" type="number" min="0" [(ngModel)]="funcionForm.cuposDisponibles">
+      </div>
+    </div>
+    <div class="acciones-form">
+      <button class="btn" type="submit">{{ editandoFuncion ? 'Guardar cambios' : 'Crear función' }}</button>
+      @if (editandoFuncion) {
+        <button class="btn btn-borde" type="button" (click)="cancelarEdicionFuncion()">Cancelar</button>
+      }
+    </div>
+  </form>
+</details>
 
 <!-- Tabla -->
 @if (funciones.length > 0) {
-  <table class="tabla">
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>Película</th>
-        <th>Sala</th>
-        <th>Fecha y hora</th>
-        <th>Precio</th>
-        <th>Cupos</th>
-        <th>Acciones</th>
-      </tr>
-    </thead>
-    <tbody>
-      @for (funcion of funciones; track funcion.idfunciones) {
+  <div class="tabla-caja">
+    <table class="tabla">
+      <thead>
         <tr>
-          <td>{{ funcion.idfunciones }}</td>
-          <td>
-            @if (funcion.pelicula) {
-              <span>{{ funcion.pelicula.titulo }}</span>
-            } @else {
-              <span>Sin película asignada</span>
-            }
-          </td>
-          <td>{{ funcion.sala }}</td>
-          <td>{{ funcion.fechaHora | date:'dd/MM/yyyy, hh:mm a' }}</td>
-          <td>{{ funcion.precio | currency:'COP':'symbol-narrow':'1.0-0' }}</td>
-          <td>{{ funcion.cuposDisponibles }}</td>
-          <td>
-            <button type="button" (click)="editarFuncion(funcion)">Editar</button>
-            <button type="button" (click)="eliminarFuncion(funcion.idfunciones)">Eliminar</button>
-          </td>
+          <th>ID</th>
+          <th>Película</th>
+          <th>Sala</th>
+          <th>Fecha y hora</th>
+          <th class="num">Precio</th>
+          <th class="num">Cupos</th>
+          <th>Acciones</th>
         </tr>
-      }
-    </tbody>
-  </table>
+      </thead>
+      <tbody>
+        @for (funcion of funciones; track funcion.idfunciones) {
+          <tr>
+            <td>{{ funcion.idfunciones }}</td>
+            <td>{{ funcion.pelicula ? funcion.pelicula.titulo : 'Sin película asignada' }}</td>
+            <td>{{ funcion.sala }}</td>
+            <td>{{ funcion.fechaHora | date:'dd/MM/yyyy, hh:mm a' }}</td>
+            <td class="num">{{ funcion.precio | currency:'COP':'symbol-narrow':'1.0-0' }}</td>
+            <td class="num">{{ funcion.cuposDisponibles }}</td>
+            <td>
+              <div class="acciones-fila">
+                <button type="button" class="btn btn-mini" (click)="editarFuncion(funcion)">Editar</button>
+                <button type="button" class="btn btn-mini btn-borde" (click)="eliminarFuncion(funcion.idfunciones)">Eliminar</button>
+              </div>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
 } @else {
   @if (cargandoFunciones) {
-    <p>Cargando funciones disponibles...</p>
+    <p class="vacio">Cargando funciones...</p>
   } @else {
-    <p>No hay funciones registradas todavía.</p>
+    <p class="vacio">Aún no hay funciones. Usa "Agregar función" para programar la primera.</p>
   }
 }
