@@ -1,0 +1,86 @@
+<h2>🎬 Funciones</h2>
+
+@if (errorConexion) {
+  <p style="color: red;">{{ errorConexion }}</p>
+}
+@if (mensajeFuncion) {
+  <p style="color: green;">{{ mensajeFuncion }}</p>
+}
+@if (errorFuncion) {
+  <p style="color: red;">{{ errorFuncion }}</p>
+}
+
+<!-- Formulario crear / editar -->
+<form (ngSubmit)="guardarFuncion()" style="margin: 10px 0; padding: 10px; border: 1px solid #ccc; max-width: 420px;">
+  <h3>{{ editandoFuncion ? 'Editar función (ID ' + funcionForm.idfunciones + ')' : 'Nueva función' }}</h3>
+
+  <label>Película</label><br>
+  <select name="idPelicula" [(ngModel)]="funcionForm.idPelicula" style="width: 100%;">
+    <option [ngValue]="null">-- Selecciona una película --</option>
+    @for (p of peliculas; track p.idpeliculas) {
+      <option [ngValue]="p.idpeliculas">{{ p.titulo }}</option>
+    }
+  </select><br><br>
+
+  <label>Fecha y hora</label><br>
+  <input name="fechaHora" type="datetime-local" [(ngModel)]="funcionForm.fechaHora" style="width: 100%;"><br><br>
+
+  <label>Sala</label><br>
+  <input name="sala" [(ngModel)]="funcionForm.sala" maxlength="45" style="width: 100%;"><br><br>
+
+  <label>Precio (COP)</label><br>
+  <input name="precio" type="number" min="0" [(ngModel)]="funcionForm.precio" style="width: 100%;"><br><br>
+
+  <label>Cupos disponibles</label><br>
+  <input name="cuposDisponibles" type="number" min="0" [(ngModel)]="funcionForm.cuposDisponibles" style="width: 100%;"><br><br>
+
+  <button type="submit">{{ editandoFuncion ? 'Guardar cambios' : 'Crear función' }}</button>
+  @if (editandoFuncion) {
+    <button type="button" (click)="cancelarEdicionFuncion()">Cancelar</button>
+  }
+</form>
+
+<!-- Tabla -->
+@if (funciones.length > 0) {
+  <table class="tabla">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Película</th>
+        <th>Sala</th>
+        <th>Fecha y hora</th>
+        <th>Precio</th>
+        <th>Cupos</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (funcion of funciones; track funcion.idfunciones) {
+        <tr>
+          <td>{{ funcion.idfunciones }}</td>
+          <td>
+            @if (funcion.pelicula) {
+              <span>{{ funcion.pelicula.titulo }}</span>
+            } @else {
+              <span>Sin película asignada</span>
+            }
+          </td>
+          <td>{{ funcion.sala }}</td>
+          <td>{{ funcion.fechaHora | date:'dd/MM/yyyy, hh:mm a' }}</td>
+          <td>{{ funcion.precio | currency:'COP':'symbol-narrow':'1.0-0' }}</td>
+          <td>{{ funcion.cuposDisponibles }}</td>
+          <td>
+            <button type="button" (click)="editarFuncion(funcion)">Editar</button>
+            <button type="button" (click)="eliminarFuncion(funcion.idfunciones)">Eliminar</button>
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+} @else {
+  @if (cargandoFunciones) {
+    <p>Cargando funciones disponibles...</p>
+  } @else {
+    <p>No hay funciones registradas todavía.</p>
+  }
+}

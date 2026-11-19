@@ -1,0 +1,70 @@
+<h2>🛒 Historial de Compras</h2>
+
+@if (errorConexion) {
+  <p style="color: red;">{{ errorConexion }}</p>
+}
+
+<div style="margin: 10px 0; padding: 10px; border: 1px solid #ccc; max-width: 620px;">
+  <label>Desde: </label>
+  <input type="date" [(ngModel)]="fechaDesde">
+  <label> Hasta: </label>
+  <input type="date" [(ngModel)]="fechaHasta">
+  <br><br>
+  <button type="button" (click)="consultarHistorial()">Consultar</button>
+  <button type="button" (click)="consultarHoy()">Solo hoy</button>
+  <button type="button" (click)="verTodasLasCompras()">Ver todas</button>
+</div>
+
+@if (errorHistorial) {
+  <p style="color: red;">{{ errorHistorial }}</p>
+}
+
+@if (filtroActivo) {
+  <p>Mostrando compras del <strong>{{ fechaDesde | date:'dd/MM/yyyy' }}</strong> al <strong>{{ fechaHasta | date:'dd/MM/yyyy' }}</strong></p>
+}
+
+@if (compras.length > 0) {
+  <table class="tabla">
+    <thead>
+      <tr>
+        <th>Fecha de compra</th>
+        <th>Cliente</th>
+        <th>Película</th>
+        <th>Función</th>
+        <th>Boletas</th>
+        <th>Total</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (compra of compras; track compra.idcompras) {
+        <tr>
+          <td>{{ compra.fechaCompra | date:'dd/MM/yyyy, hh:mm a' }}</td>
+          <td>{{ compra.nombreCliente }}</td>
+          <td>{{ compra.funcion?.pelicula?.titulo }}</td>
+          <td>
+            @if (compra.funcion) {
+              <span>{{ compra.funcion.sala }} | {{ compra.funcion.fechaHora | date:'dd/MM/yyyy, hh:mm a' }}</span>
+            }
+          </td>
+          <td>{{ compra.cantidadBoletas }}</td>
+          <td>{{ compra.valorTotal | currency:'COP':'symbol-narrow':'1.0-0' }}</td>
+        </tr>
+      }
+    </tbody>
+  </table>
+  <p style="margin-top: 10px;">
+    Compras: <strong>{{ compras.length }}</strong> |
+    Boletas: <strong>{{ totalBoletas }}</strong> |
+    Total vendido: <strong>{{ totalVentas | currency:'COP':'symbol-narrow':'1.0-0' }}</strong>
+  </p>
+} @else {
+  @if (cargandoCompras) {
+    <p>Cargando historial...</p>
+  } @else {
+    @if (filtroActivo) {
+      <p>No hay compras en ese rango de fechas.</p>
+    } @else {
+      <p>No hay compras registradas todavía.</p>
+    }
+  }
+}

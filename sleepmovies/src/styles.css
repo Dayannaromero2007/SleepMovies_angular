@@ -1,1 +1,39 @@
-/* You can add global styles to this file, and also import other style files */
+.tabla {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 10px 0;
+}
+.tabla th, .tabla td {
+  border: 1px solid #ccc;
+  padding: 8px;
+  text-align: left;
+}
+.tabla th {
+  background: #f0f0f0;
+}
+.item {
+  margin-bottom: 12px;
+}
+.acciones {
+  margin-top: 6px;
+}
+.menu {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 15px 0 25px;
+}
+.menu a {
+  padding: 8px 14px;
+  border: 1px solid #4a90d9;
+  border-radius: 6px;
+  text-decoration: none;
+  color: #4a90d9;
+}
+.menu a:hover {
+  background: #e8f1fb;
+}
+.menu a.activo {
+  background: #4a90d9;
+  color: white;
+}

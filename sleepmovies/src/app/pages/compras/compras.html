@@ -1,0 +1,41 @@
+<h2>🎟️ Compra de Boletas</h2>
+
+@if (errorConexion) {
+  <p style="color: red;">{{ errorConexion }}</p>
+}
+@if (mensajeCompra) {
+  <p style="color: green;">{{ mensajeCompra }}</p>
+}
+@if (errorCompra) {
+  <p style="color: red;">{{ errorCompra }}</p>
+}
+
+<form (ngSubmit)="comprarBoletas()" style="margin: 10px 0; padding: 10px; border: 1px solid #ccc; max-width: 420px;">
+  <label>Función</label><br>
+  <select name="idFuncion" [(ngModel)]="compraForm.idFuncion" style="width: 100%;">
+    <option [ngValue]="null">-- Selecciona una función --</option>
+    @for (f of funciones; track f.idfunciones) {
+      <option [ngValue]="f.idfunciones">{{ f.pelicula?.titulo ?? 'Sin película' }} | {{ f.sala }} | {{ f.fechaHora | date:'dd/MM/yyyy, hh:mm a' }}</option>
+    }
+  </select>
+
+  @if (funcionSeleccionada) {
+    <p style="margin: 6px 0;">
+      Precio por boleta: <strong>{{ funcionSeleccionada.precio | currency:'COP':'symbol-narrow':'1.0-0' }}</strong> |
+      Cupos disponibles: <strong>{{ funcionSeleccionada.cuposDisponibles }}</strong>
+    </p>
+  }
+  <br>
+
+  <label>Nombre del cliente</label><br>
+  <input name="nombreCliente" [(ngModel)]="compraForm.nombreCliente" maxlength="100" style="width: 100%;"><br><br>
+
+  <label>Cantidad de boletas</label><br>
+  <input name="cantidadBoletas" type="number" min="1" [(ngModel)]="compraForm.cantidadBoletas" style="width: 100%;"><br><br>
+
+  @if (totalCalculado > 0) {
+    <p style="font-size: 18px;">Valor total: <strong>{{ totalCalculado | currency:'COP':'symbol-narrow':'1.0-0' }}</strong></p>
+  }
+
+  <button type="submit" [disabled]="enviandoCompra">Comprar boletas</button>
+</form>

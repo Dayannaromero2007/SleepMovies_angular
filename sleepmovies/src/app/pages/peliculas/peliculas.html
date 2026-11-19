@@ -1,0 +1,79 @@
+<h2>🎞️ Películas</h2>
+
+@if (errorConexion) {
+  <p style="color: red;">{{ errorConexion }}</p>
+}
+@if (mensajePelicula) {
+  <p style="color: green;">{{ mensajePelicula }}</p>
+}
+@if (errorPelicula) {
+  <p style="color: red;">{{ errorPelicula }}</p>
+}
+
+<!-- Buscar por ID -->
+<div style="margin: 10px 0;">
+  <label>Buscar por ID: </label>
+  <input type="number" [(ngModel)]="idBusqueda" min="1" style="width: 80px;">
+  <button type="button" (click)="buscarPelicula()">Buscar</button>
+  <button type="button" (click)="limpiarBusqueda()">Limpiar</button>
+</div>
+
+@if (peliculaBuscada) {
+  <div style="margin: 10px 0; padding: 10px; border: 2px solid #4a90d9; max-width: 520px;">
+    <strong>Resultado de la búsqueda (ID {{ peliculaBuscada.idpeliculas }})</strong><br>
+    <strong>{{ peliculaBuscada.titulo }}</strong><br>
+    <span>Género: {{ peliculaBuscada.genero }}</span> |
+    <span>Duración: {{ peliculaBuscada.duracion }} min</span> |
+    <span>Clasificación: {{ peliculaBuscada.clasificacion }}</span>
+    <div class="acciones">
+      <button type="button" (click)="editarPelicula(peliculaBuscada)">Editar</button>
+      <button type="button" (click)="eliminarPelicula(peliculaBuscada.idpeliculas)">Eliminar</button>
+    </div>
+  </div>
+}
+
+<!-- Formulario crear / editar -->
+<form (ngSubmit)="guardarPelicula()" style="margin: 10px 0; padding: 10px; border: 1px solid #ccc; max-width: 420px;">
+  <h3>{{ editandoPelicula ? 'Editar película (ID ' + peliculaForm.idpeliculas + ')' : 'Nueva película' }}</h3>
+
+  <label>Título</label><br>
+  <input name="titulo" [(ngModel)]="peliculaForm.titulo" maxlength="100" style="width: 100%;"><br><br>
+
+  <label>Género</label><br>
+  <input name="genero" [(ngModel)]="peliculaForm.genero" maxlength="45" style="width: 100%;"><br><br>
+
+  <label>Duración (minutos)</label><br>
+  <input name="duracion" type="number" min="1" [(ngModel)]="peliculaForm.duracion" style="width: 100%;"><br><br>
+
+  <label>Clasificación</label><br>
+  <input name="clasificacion" [(ngModel)]="peliculaForm.clasificacion" maxlength="10" style="width: 100%;"><br><br>
+
+  <button type="submit">{{ editandoPelicula ? 'Guardar cambios' : 'Crear película' }}</button>
+  @if (editandoPelicula) {
+    <button type="button" (click)="cancelarEdicionPelicula()">Cancelar</button>
+  }
+</form>
+
+<!-- Lista -->
+@if (peliculas.length > 0) {
+  <ul>
+    @for (pelicula of peliculas; track pelicula.idpeliculas) {
+      <li class="item">
+        <strong>{{ pelicula.titulo }}</strong> (ID {{ pelicula.idpeliculas }})<br>
+        <span>Género: {{ pelicula.genero }}</span> |
+        <span>Duración: {{ pelicula.duracion }} min</span> |
+        <span>Clasificación: {{ pelicula.clasificacion }}</span>
+        <div class="acciones">
+          <button type="button" (click)="editarPelicula(pelicula)">Editar</button>
+          <button type="button" (click)="eliminarPelicula(pelicula.idpeliculas)">Eliminar</button>
+        </div>
+      </li>
+    }
+  </ul>
+} @else {
+  @if (cargandoPeliculas) {
+    <p>Cargando películas o esperando conexión con el servidor...</p>
+  } @else {
+    <p>No hay películas registradas todavía.</p>
+  }
+}
