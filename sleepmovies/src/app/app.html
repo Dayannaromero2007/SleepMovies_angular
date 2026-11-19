@@ -4,20 +4,72 @@
   @if (errorConexion) {
     <p style="color: red;">{{ errorConexion }}</p>
   }
-
-  <!-- Películas -->
+    <!-- Películas -->
   <h2>🎞️ Películas</h2>
+
+  @if (mensajePelicula) {
+    <p style="color: green;">{{ mensajePelicula }}</p>
+  }
+  @if (errorPelicula) {
+    <p style="color: red;">{{ errorPelicula }}</p>
+  }
+
+  <!-- Buscar por ID -->
+  <div style="margin: 10px 0;">
+    <label>Buscar por ID: </label>
+    <input type="number" [(ngModel)]="idBusqueda" min="1" style="width: 80px;">
+    <button type="button" (click)="buscarPelicula()">Buscar</button>
+    <button type="button" (click)="limpiarBusqueda()">Limpiar</button>
+  </div>
+
+  @if (peliculaBuscada) {
+    <div style="margin: 10px 0; padding: 10px; border: 2px solid #4a90d9; max-width: 520px;">
+      <strong>Resultado de la búsqueda (ID {{ peliculaBuscada.idpeliculas }})</strong><br>
+      <strong>{{ peliculaBuscada.titulo }}</strong><br>
+      <span>Género: {{ peliculaBuscada.genero }}</span> |
+      <span>Duración: {{ peliculaBuscada.duracion }} min</span> |
+      <span>Clasificación: {{ peliculaBuscada.clasificacion }}</span>
+      <div class="acciones">
+        <button type="button" (click)="editarPelicula(peliculaBuscada)">Editar</button>
+        <button type="button" (click)="eliminarPelicula(peliculaBuscada.idpeliculas)">Eliminar</button>
+      </div>
+    </div>
+  }
+
+  <!-- Formulario crear / editar -->
+  <form (ngSubmit)="guardarPelicula()" style="margin: 10px 0; padding: 10px; border: 1px solid #ccc; max-width: 420px;">
+    <h3>{{ editandoPelicula ? 'Editar película (ID ' + peliculaForm.idpeliculas + ')' : 'Nueva película' }}</h3>
+
+    <label>Título</label><br>
+    <input name="titulo" [(ngModel)]="peliculaForm.titulo" maxlength="100" style="width: 100%;"><br><br>
+
+    <label>Género</label><br>
+    <input name="genero" [(ngModel)]="peliculaForm.genero" maxlength="45" style="width: 100%;"><br><br>
+
+    <label>Duración (minutos)</label><br>
+    <input name="duracion" type="number" min="1" [(ngModel)]="peliculaForm.duracion" style="width: 100%;"><br><br>
+
+    <label>Clasificación</label><br>
+    <input name="clasificacion" [(ngModel)]="peliculaForm.clasificacion" maxlength="10" style="width: 100%;"><br><br>
+
+    <button type="submit">{{ editandoPelicula ? 'Guardar cambios' : 'Crear película' }}</button>
+    @if (editandoPelicula) {
+      <button type="button" (click)="cancelarEdicionPelicula()">Cancelar</button>
+    }
+  </form>
+
+  <!-- Lista -->
   @if (peliculas.length > 0) {
     <ul>
       @for (pelicula of peliculas; track pelicula.idpeliculas) {
         <li class="item">
-          <strong>{{ pelicula.titulo }}</strong><br>
+          <strong>{{ pelicula.titulo }}</strong> (ID {{ pelicula.idpeliculas }})<br>
           <span>Género: {{ pelicula.genero }}</span> |
           <span>Duración: {{ pelicula.duracion }} min</span> |
           <span>Clasificación: {{ pelicula.clasificacion }}</span>
           <div class="acciones">
-            <button (click)="editarPelicula(pelicula)">Editar</button>
-            <button (click)="eliminarPelicula(pelicula.idpeliculas)">Eliminar</button>
+            <button type="button" (click)="editarPelicula(pelicula)">Editar</button>
+            <button type="button" (click)="eliminarPelicula(pelicula.idpeliculas)">Eliminar</button>
           </div>
         </li>
       }
@@ -26,12 +78,52 @@
     <p>Cargando películas o esperando conexión con el servidor...</p>
   }
 
-  <!-- Funciones -->
+    <!-- Funciones -->
   <h2>🎬 Funciones</h2>
+
+  @if (mensajeFuncion) {
+    <p style="color: green;">{{ mensajeFuncion }}</p>
+  }
+  @if (errorFuncion) {
+    <p style="color: red;">{{ errorFuncion }}</p>
+  }
+
+  <!-- Formulario crear / editar -->
+  <form (ngSubmit)="guardarFuncion()" style="margin: 10px 0; padding: 10px; border: 1px solid #ccc; max-width: 420px;">
+    <h3>{{ editandoFuncion ? 'Editar función (ID ' + funcionForm.idfunciones + ')' : 'Nueva función' }}</h3>
+
+    <label>Película</label><br>
+    <select name="idPelicula" [(ngModel)]="funcionForm.idPelicula" style="width: 100%;">
+      <option [ngValue]="null">-- Selecciona una película --</option>
+      @for (p of peliculas; track p.idpeliculas) {
+        <option [ngValue]="p.idpeliculas">{{ p.titulo }}</option>
+      }
+    </select><br><br>
+
+    <label>Fecha y hora</label><br>
+    <input name="fechaHora" type="datetime-local" [(ngModel)]="funcionForm.fechaHora" style="width: 100%;"><br><br>
+
+    <label>Sala</label><br>
+    <input name="sala" [(ngModel)]="funcionForm.sala" maxlength="45" style="width: 100%;"><br><br>
+
+    <label>Precio (COP)</label><br>
+    <input name="precio" type="number" min="0" [(ngModel)]="funcionForm.precio" style="width: 100%;"><br><br>
+
+    <label>Cupos disponibles</label><br>
+    <input name="cuposDisponibles" type="number" min="0" [(ngModel)]="funcionForm.cuposDisponibles" style="width: 100%;"><br><br>
+
+    <button type="submit">{{ editandoFuncion ? 'Guardar cambios' : 'Crear función' }}</button>
+    @if (editandoFuncion) {
+      <button type="button" (click)="cancelarEdicionFuncion()">Cancelar</button>
+    }
+  </form>
+
+  <!-- Tabla -->
   @if (funciones.length > 0) {
     <table class="tabla">
       <thead>
         <tr>
+          <th>ID</th>
           <th>Película</th>
           <th>Sala</th>
           <th>Fecha y hora</th>
@@ -43,6 +135,7 @@
       <tbody>
         @for (funcion of funciones; track funcion.idfunciones) {
           <tr>
+            <td>{{ funcion.idfunciones }}</td>
             <td>
               @if (funcion.pelicula) {
                 <span>{{ funcion.pelicula.titulo }}</span>
@@ -55,8 +148,8 @@
             <td>{{ funcion.precio | currency:'COP':'symbol-narrow':'1.0-0' }}</td>
             <td>{{ funcion.cuposDisponibles }}</td>
             <td>
-              <button (click)="editarFuncion(funcion)">Editar</button>
-              <button (click)="eliminarFuncion(funcion.idfunciones)">Eliminar</button>
+              <button type="button" (click)="editarFuncion(funcion)">Editar</button>
+              <button type="button" (click)="eliminarFuncion(funcion.idfunciones)">Eliminar</button>
             </td>
           </tr>
         }
@@ -65,6 +158,46 @@
   } @else {
     <p>Cargando funciones disponibles...</p>
   }
+
+    <!-- Compra de boletas -->
+  <h2>🎟️ Compra de Boletas</h2>
+
+  @if (mensajeCompra) {
+    <p style="color: green;">{{ mensajeCompra }}</p>
+  }
+  @if (errorCompra) {
+    <p style="color: red;">{{ errorCompra }}</p>
+  }
+
+  <form (ngSubmit)="comprarBoletas()" style="margin: 10px 0; padding: 10px; border: 1px solid #ccc; max-width: 420px;">
+    <label>Función</label><br>
+    <select name="idFuncion" [(ngModel)]="compraForm.idFuncion" style="width: 100%;">
+      <option [ngValue]="null">-- Selecciona una función --</option>
+      @for (f of funciones; track f.idfunciones) {
+        <option [ngValue]="f.idfunciones">{{ f.pelicula?.titulo ?? 'Sin película' }} | {{ f.sala }} | {{ f.fechaHora | date:'dd/MM/yyyy, hh:mm a' }}</option>
+      }
+    </select>
+
+    @if (funcionSeleccionada) {
+      <p style="margin: 6px 0;">
+        Precio por boleta: <strong>{{ funcionSeleccionada.precio | currency:'COP':'symbol-narrow':'1.0-0' }}</strong> |
+        Cupos disponibles: <strong>{{ funcionSeleccionada.cuposDisponibles }}</strong>
+      </p>
+    }
+    <br>
+
+    <label>Nombre del cliente</label><br>
+    <input name="nombreCliente" [(ngModel)]="compraForm.nombreCliente" maxlength="100" style="width: 100%;"><br><br>
+
+    <label>Cantidad de boletas</label><br>
+    <input name="cantidadBoletas" type="number" min="1" [(ngModel)]="compraForm.cantidadBoletas" style="width: 100%;"><br><br>
+
+    @if (totalCalculado > 0) {
+      <p style="font-size: 18px;">Valor total: <strong>{{ totalCalculado | currency:'COP':'symbol-narrow':'1.0-0' }}</strong></p>
+    }
+
+    <button type="submit" [disabled]="enviandoCompra">Comprar boletas</button>
+  </form>
 
   <!-- Compras (solo listar) -->
   <h2>🛒 Historial de Compras</h2>

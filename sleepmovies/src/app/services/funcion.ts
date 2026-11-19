@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
-@Injectable ({
+@Injectable({
   providedIn: 'root',
 })
 export class FuncionService {
@@ -11,6 +11,10 @@ export class FuncionService {
 
   obtenerFunciones(): Observable<any> {
     return this.http.get<any>(this.apiUrl);
+  }
+
+  obtenerFuncionPorId(id: number): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/${id}`);
   }
 
   registrarFunciones(funcion: any): Observable<any> {
